@@ -18,7 +18,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Tab = createBottomTabNavigator();
 
-const apiBaseUrl = 'http://<SEU_IP>:8000';
+const apiBaseUrl = 'http://192.168.2.20:8000';
 
 // Tela de Logs
 function LogsScreen() {
@@ -64,6 +64,13 @@ function AddUserScreen() {
   const [email, setEmail] = useState('');
   const [rfid, setRfid] = useState('');
 
+  const handleReadRfid = () => {
+    fetch(`${apiBaseUrl}/read-rfid`)
+      .then((response) => response.json())
+      .then((data) => setRfid(data.rfid))
+      .catch((error) => alert('Erro ao ler o RFID.'));
+  };
+
   const handleSubmit = () => {
     fetch(`${apiBaseUrl}/users`, {
       method: 'POST',
@@ -80,7 +87,11 @@ function AddUserScreen() {
     <View style={styles.container}>
       <TextInput placeholder="Nome" style={styles.input} value={name} onChangeText={setName} />
       <TextInput placeholder="Email" style={styles.input} value={email} onChangeText={setEmail} />
-      <TextInput placeholder="RFID" style={styles.input} value={rfid} onChangeText={setRfid} />
+      <TextInput placeholder="RFID" style={styles.input} value={rfid} editable={false} />
+      <TouchableOpacity style={styles.button} onPress={handleReadRfid}>
+        <Text style={styles.buttonText}>Ler RFID</Text>
+      </TouchableOpacity>
+      <View style={styles.spacing} />
       <Button title="Cadastrar" onPress={handleSubmit} />
     </View>
   );
@@ -151,6 +162,19 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     padding: 10,
+    marginVertical: 10,
+  },
+  button: {
+    backgroundColor: 'green',
+    padding: 10,
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  spacing: {
     marginVertical: 10,
   },
 });
